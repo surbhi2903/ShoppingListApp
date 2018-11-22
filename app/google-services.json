@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1066478822231",
+    "firebase_url": "https://shoppinglistapp-7c956.firebaseio.com",
+    "project_id": "shoppinglistapp-7c956",
+    "storage_bucket": "shoppinglistapp-7c956.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1066478822231:android:a8f7cc7e438e3374",
+        "android_client_info": {
+          "package_name": "edu.uga.cs.shoppinglistapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1066478822231-m308n1vai7s1l16lc6k54inqm168nped.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.uga.cs"
+          }
+        },
+        {
+          "client_id": "1066478822231-1a8u17da6u7gn2n34m95igqq3dgi2ur2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQNBc0bNpGdgB80Il1x7mNt_975Tw2jRE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1066478822231-1a8u17da6u7gn2n34m95igqq3dgi2ur2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

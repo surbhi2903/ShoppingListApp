@@ -11,10 +11,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText txtTitle;
     private Button mFirebasebtn;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,38 +45,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
 
 
+        txtTitle = (EditText) findViewById(R.id.listName);
         /**
          * Getting already made lists from the database...
          */
-        final ArrayList<String> allLists = new ArrayList<String>();
-        mDatabaseReference.child("shoppinglists").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (int i = 0; i < 3; i++) {
-                    allLists.add(dataSnapshot.getValue(String.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
         ListView listView = (ListView) findViewById(R.id.listView);
         Button btn= (Button) findViewById(R.id.newList);
 
-        String [] lists = new String [] {
-                "List",
-                "Walmart"
+        ListAdapter myAdapter = new FirebaseListAdapter<ShoppingList>(this, ShoppingList.class, android.R.layout.simple_list_item_1, mDatabaseReference) {
+            @Override
+            protected void populateView(View v, ShoppingList list, int position) {
+                ((TextView)v.findViewById(android.R.id.text1)).setText(list.getTitle());
+            }
         };
-
-        final List<String> testList = new ArrayList<String>(Arrays.asList(lists));
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,testList);
-        listView.setAdapter(arrayAdapter);
-
-        txtTitle = (EditText) findViewById(R.id.listName);
-
+        
+        listView.setAdapter(myAdapter);
         btn.setOnClickListener(this);
     }
 
@@ -81,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         //Create child in root object
         //Assign some value to child object
-        mDatabaseReference.child("shoppinglists");
+        //mDatabaseReference.child("shoppinglists");
         saveList();
         clean();
     }
@@ -89,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void saveList() {
         String title = txtTitle.getText().toString();
         ShoppingList list = new ShoppingList(title);
-        mDatabaseReference.push().setValue(list);
+        mDatabaseReference.child(title).setValue(list);
 
     }
     private void clean() {
@@ -135,3 +121,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        FirebaseUtil.attachListener();
     }
 }
+

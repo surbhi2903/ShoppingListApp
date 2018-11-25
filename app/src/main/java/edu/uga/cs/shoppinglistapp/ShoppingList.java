@@ -1,12 +1,27 @@
 package edu.uga.cs.shoppinglistapp;
 
+import java.util.List;
+
 public class ShoppingList {
    private String id;
    private String title;
+   private List<GroceryItem> items;
+
+
+   public ShoppingList () {
+
+   }
+
+   public ShoppingList(String title, List<GroceryItem> items) {
+       this.setId(id);
+       this.setTitle(title);
+       this.items = items;
+   }
 
    public ShoppingList(String title) {
        this.setId(id);
-       this.setTitle(title);
+       this.title = title;
+       this.items = null;
    }
 
     public String getId() {
@@ -23,5 +38,13 @@ public class ShoppingList {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setItems(List<GroceryItem> items) {
+        this.items = items;
+    }
+
+    public List<GroceryItem> getItems() {
+        return items;
     }
 }

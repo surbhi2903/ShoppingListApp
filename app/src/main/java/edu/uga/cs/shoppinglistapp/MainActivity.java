@@ -63,12 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listView.setAdapter(myAdapter);
         btn.setOnClickListener(this);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // launch grocery list
-            }
-        });
     }
 
     @Override
@@ -81,14 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void saveList() {
-        /*
-        GroceryItem item1 = new GroceryItem("Bread", "2.24");
-        GroceryItem item2 = new GroceryItem("Milk", "1.69");
-        List<GroceryItem> gList;
-        gList = new ArrayList<GroceryItem>();
-        gList.add(item1);
-        gList.add(item2);
-        */
+
         String title = txtTitle.getText().toString();
         ShoppingList list = new ShoppingList(title);
         mDatabaseReference.child(title).setValue(list);

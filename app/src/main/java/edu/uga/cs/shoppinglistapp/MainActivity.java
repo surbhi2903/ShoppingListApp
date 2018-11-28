@@ -132,7 +132,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         });
                 FirebaseUtil.detachListener();
                 return true;
-
+            case R.id.roommates:
+                Intent i = new Intent(this,RoommatesActivity.class);
+                this.startActivity(i);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

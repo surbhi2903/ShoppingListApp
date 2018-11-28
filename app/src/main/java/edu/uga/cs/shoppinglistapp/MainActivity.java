@@ -1,5 +1,6 @@
 package edu.uga.cs.shoppinglistapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mFirebasebtn;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,19 +53,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /**
          * Getting already made lists from the database...
          */
-        ListView listView = (ListView) findViewById(R.id.listView);
+        final ListView listView = (ListView) findViewById(R.id.listView);
         Button btn= (Button) findViewById(R.id.newList);
 
-        ListAdapter myAdapter = new FirebaseListAdapter<ShoppingList>(this, ShoppingList.class, android.R.layout.simple_list_item_1, mDatabaseReference) {
+
+        final ListAdapter myAdapter = new FirebaseListAdapter<ShoppingList>(this, ShoppingList.class,
+                android.R.layout.simple_list_item_1, mDatabaseReference) {
             @Override
             protected void populateView(View v, ShoppingList list, int position) {
                 ((TextView)v.findViewById(android.R.id.text1)).setText(list.getTitle());
             }
         };
-
         listView.setAdapter(myAdapter);
         btn.setOnClickListener(this);
 
+
+        // upon clicking an item, shows the contents of
+        // the grocery list, and passes grocery list name to
+        // the next activity
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(),ViewListActivity.class);
+                ShoppingList lTitle = new ShoppingList();
+                lTitle = (ShoppingList) listView.getItemAtPosition(position);
+                String gName = lTitle.getTitle();
+                intent.putExtra("listName",gName);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -75,8 +94,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void saveList() {
-
         String title = txtTitle.getText().toString();
+        /*
+        List<GroceryItem> gList = new ArrayList<GroceryItem>();
+        GroceryItem item1 = new GroceryItem("Bread", "$2.00");
+        GroceryItem item2 = new GroceryItem("Milk","$1.00");
+        gList.add(item1);
+        gList.add(item2);
+        */
         ShoppingList list = new ShoppingList(title);
         mDatabaseReference.child(title).setValue(list);
 
@@ -124,4 +149,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        FirebaseUtil.attachListener();
     }
 }
+
 

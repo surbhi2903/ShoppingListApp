@@ -2,6 +2,7 @@ package edu.uga.cs.shoppinglistapp;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference mDatabaseReference;
     EditText txtTitle;
     private Button mFirebasebtn;
+    private ChildEventListener mChildListener;
 
 
 
@@ -47,14 +50,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FirebaseUtil.openFbReference("shoppinglists", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
-
-
         txtTitle = (EditText) findViewById(R.id.listName);
         /**
          * Getting already made lists from the database...
          */
         final ListView listView = (ListView) findViewById(R.id.listView);
-        Button btn= (Button) findViewById(R.id.newList);
+         mFirebasebtn= (Button) findViewById(R.id.newList);
 
 
         final ListAdapter myAdapter = new FirebaseListAdapter<ShoppingList>(this, ShoppingList.class,
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         listView.setAdapter(myAdapter);
-        btn.setOnClickListener(this);
+        mFirebasebtn.setOnClickListener(this);
 
 
         // upon clicking an item, shows the contents of
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gList.add(item2);
         */
         ShoppingList list = new ShoppingList(title);
-        mDatabaseReference.child(title).setValue(list);
+        mDatabaseReference.push().child(title).setValue(list);
 
     }
     private void clean() {

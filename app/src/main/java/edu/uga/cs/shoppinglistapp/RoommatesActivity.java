@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,12 +27,23 @@ public class RoommatesActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roommates);
+//        mFirebaseDatabase = FirebaseDatabase.getInstance();
+//        mDatabaseReference = mFirebaseDatabase.getReference().child("users");
         emailId = (EditText)findViewById(R.id.roommate_text);
         checkEmailId = (Button)findViewById(R.id.button);
         FirebaseUtil.openFbReference("users", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
-       auth = FirebaseAuth.getInstance();
+//        final ListView listView = (ListView) findViewById(R.id.roommate_list);
+        auth = FirebaseAuth.getInstance();
+//
+//        final ListAdapter myAdapter = new FirebaseListAdapter<User>(this, User.class, android.R.layout.simple_list_item_2, mDatabaseReference) {
+//            @Override
+//            protected void populateView(View v, User user, int position) {
+//                ((TextView)v.findViewById(android.R.id.text2)).setText(user.getEmail());
+//            }
+//        };
+//        listView.setAdapter(myAdapter);
        checkEmailId.setOnClickListener(this);
     }
     @Override
@@ -62,6 +74,13 @@ public class RoommatesActivity extends AppCompatActivity implements View.OnClick
 
     private void saveId() {
         String email = emailId.getText().toString();
+        /*
+        List<GroceryItem> gList = new ArrayList<GroceryItem>();
+        GroceryItem item1 = new GroceryItem("Bread", "$2.00");
+        GroceryItem item2 = new GroceryItem("Milk","$1.00");
+        gList.add(item1);
+        gList.add(item2);
+        */
         User userName = new User(email);
         mDatabaseReference.push().setValue(userName);
 

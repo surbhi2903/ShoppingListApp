@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference mDatabaseReference;
     EditText txtTitle;
     private Button mFirebasebtn;
-    private ChildEventListener mChildListener;
-
 
 
     @Override
@@ -54,8 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /**
          * Getting already made lists from the database...
          */
-        final ListView listView = (ListView) findViewById(R.id.listView);
-         mFirebasebtn= (Button) findViewById(R.id.newList);
+        mFirebasebtn = (Button) findViewById(R.id.newList);
 
 
         final ListAdapter myAdapter = new FirebaseListAdapter<ShoppingList>(this, ShoppingList.class,
@@ -65,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ((TextView)v.findViewById(android.R.id.text1)).setText(list.getTitle());
             }
         };
+        final ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(myAdapter);
         mFirebasebtn.setOnClickListener(this);
 
@@ -104,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gList.add(item2);
         */
         ShoppingList list = new ShoppingList(title);
-        mDatabaseReference.push().child(title).setValue(list);
+        mDatabaseReference.push().setValue(list);
 
     }
     private void clean() {

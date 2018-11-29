@@ -19,9 +19,7 @@ public class ShoppingList {
    }
 
    public ShoppingList(String title) {
-       this.setId(id);
        this.title = title;
-       this.items = null;
    }
 
     public String getId() {

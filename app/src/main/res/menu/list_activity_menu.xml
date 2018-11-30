@@ -7,4 +7,7 @@
     <item android:id="@+id/roommates"
         android:title="Roommates"
         app:showAsAction="never"/>
+    <item android:id="@+id/shopping_list"
+        android:title="Shopping Lists"
+        app:showAsAction="never"/>
 </menu>

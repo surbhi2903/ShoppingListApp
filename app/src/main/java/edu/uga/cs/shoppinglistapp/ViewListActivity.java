@@ -1,5 +1,6 @@
 package edu.uga.cs.shoppinglistapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -92,6 +93,14 @@ public class ViewListActivity extends AppCompatActivity {
                             }
                         });
                 FirebaseUtil.detachListener();
+                return true;
+            case R.id.roommates:
+                Intent roommate = new Intent(this,RoommatesActivity.class);
+                this.startActivity(roommate);
+                return true;
+            case R.id.shopping_list:
+                Intent i = new Intent(this,MainActivity.class);
+                this.startActivity(i);
                 return true;
 
         }

@@ -1,19 +1,25 @@
 package edu.uga.cs.shoppinglistapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,7 +44,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     EditText txtTitle;
+    TextView textView;
     private Button mFirebasebtn;
+    FrameLayout fLayout;
+    private static Activity caller;
+    Button bt;
 
 
     @Override
@@ -53,19 +63,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          * Getting already made lists from the database...
          */
         mFirebasebtn = (Button) findViewById(R.id.newList);
-
+        caller = this;
 
         final ListAdapter myAdapter = new FirebaseListAdapter<ShoppingList>(this, ShoppingList.class,
                 android.R.layout.simple_list_item_1, mDatabaseReference) {
+
             @Override
             protected void populateView(View v, ShoppingList list, int position) {
-                ((TextView)v.findViewById(android.R.id.text1)).setText(list.getTitle());
+//                LinearLayout linearLayout = new LinearLayout(caller);
+//                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+//                linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                textView = (TextView)v.findViewById(android.R.id.text1);
+                ViewGroup.LayoutParams params =  new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                textView.setLayoutParams(params);
+                textView.setText(list.getTitle());
+//                bt = (Button)v.findViewById(android.R.id.button1);
+//                bt.setText("Delete");
             }
         };
         final ListView listView = (ListView) findViewById(R.id.listView);
+
         listView.setAdapter(myAdapter);
         mFirebasebtn.setOnClickListener(this);
-
 
         // upon clicking an item, shows the contents of
         // the grocery list, and passes grocery list name to
@@ -132,7 +151,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FirebaseUtil.detachListener();
                 return true;
             case R.id.roommates:
-                Intent i = new Intent(this,RoommatesActivity.class);
+                Intent roommate = new Intent(this,RoommatesActivity.class);
+                this.startActivity(roommate);
+                return true;
+            case R.id.shopping_list:
+                Intent i = new Intent(this,MainActivity.class);
                 this.startActivity(i);
                 return true;
         }

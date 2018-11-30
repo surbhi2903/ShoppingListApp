@@ -5,10 +5,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -99,6 +103,13 @@ public class RoommatesActivity extends AppCompatActivity implements View.OnClick
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.list_activity_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout_menu:
@@ -113,7 +124,11 @@ public class RoommatesActivity extends AppCompatActivity implements View.OnClick
                 FirebaseUtil.detachListener();
                 return true;
             case R.id.roommates:
-                Intent i = new Intent(this,RoommatesActivity.class);
+                Intent roommate = new Intent(this,RoommatesActivity.class);
+                this.startActivity(roommate);
+                return true;
+            case R.id.shopping_list:
+                Intent i = new Intent(this,MainActivity.class);
                 this.startActivity(i);
                 return true;
         }

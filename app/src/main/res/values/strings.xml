@@ -3,4 +3,7 @@
     <string name="shopping_hint">Add Shopping List Name</string>
     <string name="roommate_hint">Add Roommate Email Id</string>
     <string name="grocery_hint">Add Grocery Item</string>
+    <string name="hint1">Item name</string>
+    <string name="hint2">Item cost</string>
+    <string name="hint3">Paid by</string>
 </resources>

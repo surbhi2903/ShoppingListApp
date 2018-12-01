@@ -10,10 +10,10 @@ public class GroceryItem {
 
     }
 
-    public GroceryItem(String itemName, String itemCost) {
+   public GroceryItem(String itemName, String itemCost, String name) {
         this.itemName = itemName;
         this.itemCost = itemCost;
-        this.purchasedBy = null;
+        this.purchasedBy = name;
     }
 
     public void setItemName(String itemName) {

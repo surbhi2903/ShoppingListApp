@@ -22,13 +22,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class ViewListActivity extends AppCompatActivity {
+public class ViewListActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
-    private TextView listName;
-    private TextView itemCost;
-    private EditText newItem;
+    TextView listName;
+    int listKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,41 +35,34 @@ public class ViewListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_list);
         Bundle extras = getIntent().getExtras();
         String data = extras.getString("listName");
+        listKey = extras.getInt("id");
         FirebaseUtil.openFbReference("shoppinglists", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
         listName = (TextView)findViewById(R.id.listName);
         listName.setText(data);
-        newItem = (EditText) findViewById(R.id.itemName);
         ListView listView = (ListView) findViewById(R.id.itemLV);
         Button btn = (Button)findViewById(R.id.addItemBtn);
         ListAdapter myAdapter = new FirebaseListAdapter<GroceryItem>(this, GroceryItem.class,
                 R.layout.item_list, mDatabaseReference.child(data).child("items")) {
             @Override
             protected void populateView(View v, GroceryItem item, int position) {
-                 ((TextView) v.findViewById(R.id.iName)).setText(item.getItemName());
-                 ((TextView) v.findViewById(R.id.itemCost)).setText(item.getItemCost());
+                ((TextView) v.findViewById(R.id.iName)).setText(item.getItemName());
+                ((TextView) v.findViewById(R.id.iCost)).setText(item.getItemCost());
             }
         };
         listView.setAdapter(myAdapter);
 
-   //     btn.setOnClickListener(this);
+        btn.setOnClickListener(this);
     }
 
-    //@Override
-    //public void onClick(View v) {
-     //   saveItem();
-     //   clean();
-    //}
-
-    private void clean() {
-        newItem.setText("New Item");
-    }
-
-    private void saveItem() {
-        String lName = listName.getText().toString();
-        String nItem = newItem.getText().toString();
-        mDatabaseReference.child(lName).child("items").setValue(nItem);
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(getApplicationContext(), NewItemActivity.class);
+        String name = listName.getText().toString();
+        intent.putExtra("listName",name);
+        intent.putExtra("id", listKey);
+        v.getContext().startActivity(intent);
     }
 
     @Override

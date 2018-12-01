@@ -4,34 +4,34 @@ import java.util.List;
 import java.util.Map;
 
 public class ShoppingList {
-   private String uid;
-   private String title;
-   private List<GroceryItem> items;
-   private String listId;
-   private String shoppingId;
-   private Map<String,String> users;
+    private String uid;
+    private String title;
+    private List<GroceryItem> items;
+    private String listId;
+    private String shoppingId;
+    private Map<String,String> users;
 
-   public ShoppingList () {
+    public ShoppingList () {
 
-   }
+    }
 
-   public ShoppingList(String title, List<GroceryItem> items) {
-       this.setUid(uid);
-       this.setTitle(title);
-       this.items = items;
-   }
+    public ShoppingList(String title, List<GroceryItem> items) {
+        this.setUid(uid);
+        this.setTitle(title);
+        this.items = items;
+    }
 
-   public String getShoppingId() {return  shoppingId; }
+    public String getShoppingId() {return  shoppingId; }
 
-   public void setShoppingId(String shoppingId) { this.shoppingId = shoppingId; }
+    public void setShoppingId(String shoppingId) { this.shoppingId = shoppingId; }
 
-   public String getListId() { return listId; }
+    public String getListId() { return listId; }
 
-   public void setListId(String listId) { this.listId = listId; }
+    public void setListId(String listId) { this.listId = listId; }
 
-   public ShoppingList(String title) {
-       this.title = title;
-   }
+    public ShoppingList(String title) {
+        this.title = title;
+    }
 
     public String getUid() {
         return uid;

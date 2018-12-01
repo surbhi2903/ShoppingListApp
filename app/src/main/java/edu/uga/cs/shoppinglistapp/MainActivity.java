@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Query query = mDatabaseReference.orderByChild("users/l6uhx6wunqZrhItRrToPDsjVNu73").equalTo(userID);
         Query query = mDatabaseReference.orderByChild("users/" + firebaseUser.getUid()).equalTo(firebaseUser.getEmail());
 
-
         adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 listItems);
@@ -256,5 +255,3 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 }
-
-

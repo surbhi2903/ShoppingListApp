@@ -16,8 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewListActivity"></activity>
-        <activity android:name=".RoommatesActivity"></activity>
+        <activity android:name=".ViewListActivity" />
+        <activity android:name=".RoommatesActivity" />
+        <activity android:name=".NewItemActivity"></activity>
     </application>
 
 </manifest>

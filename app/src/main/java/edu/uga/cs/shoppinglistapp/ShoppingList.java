@@ -1,33 +1,44 @@
 package edu.uga.cs.shoppinglistapp;
 
 import java.util.List;
+import java.util.Map;
 
 public class ShoppingList {
-   private String id;
+   private String uid;
    private String title;
    private List<GroceryItem> items;
-
+   private String listId;
+   private String shoppingId;
+   private Map<String,String> users;
 
    public ShoppingList () {
 
    }
 
    public ShoppingList(String title, List<GroceryItem> items) {
-       this.setId(id);
+       this.setUid(uid);
        this.setTitle(title);
        this.items = items;
    }
+
+   public String getShoppingId() {return  shoppingId; }
+
+   public void setShoppingId(String shoppingId) { this.shoppingId = shoppingId; }
+
+   public String getListId() { return listId; }
+
+   public void setListId(String listId) { this.listId = listId; }
 
    public ShoppingList(String title) {
        this.title = title;
    }
 
-    public String getId() {
-        return id;
+    public String getUid() {
+        return uid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getTitle() {
@@ -44,5 +55,13 @@ public class ShoppingList {
 
     public List<GroceryItem> getItems() {
         return items;
+    }
+
+    public Map<String, String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Map<String, String> users) {
+        this.users = users;
     }
 }

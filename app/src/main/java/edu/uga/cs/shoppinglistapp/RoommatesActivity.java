@@ -41,7 +41,7 @@ public class RoommatesActivity extends AppCompatActivity implements View.OnClick
 //        mFirebaseDatabase = FirebaseDatabase.getInstance();
 //        mDatabaseReference = mFirebaseDatabase.getReference().child("users");
 
-        FirebaseUtil.openFbReference("users", this);
+        FirebaseUtil.openFbReference("shoppinglists", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
         emailId = (EditText)findViewById(R.id.roommate_text);
@@ -105,7 +105,7 @@ public class RoommatesActivity extends AppCompatActivity implements View.OnClick
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_activity_menu, menu);
+        inflater.inflate(R.menu.items_activity_menu, menu);
         return true;
     }
 

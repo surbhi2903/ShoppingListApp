@@ -3,7 +3,8 @@ package edu.uga.cs.shoppinglistapp;
 public class User {
     private String name;
     private String email;
-    private String UID;
+    private String shoppingId;
+    private String UserId;
 
     public User() {
 
@@ -12,12 +13,12 @@ public class User {
         this.email = email;
     }
 
-    public String getUID() {
-        return UID;
+    public String getShoppingId() {
+        return shoppingId;
     }
 
-    public void setUID(String UID) {
-        this.UID = UID;
+    public void setShoppingId(String shoppingId) {
+        this.shoppingId = shoppingId;
     }
 
     public String getEmail() {
@@ -34,5 +35,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUserId() {
+        return UserId;
+    }
+
+    public void setUserId(String userId) {
+        UserId = userId;
     }
 }

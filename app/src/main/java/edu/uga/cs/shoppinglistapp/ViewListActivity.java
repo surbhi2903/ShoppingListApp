@@ -76,7 +76,7 @@ public class ViewListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_activity_menu, menu);
+        inflater.inflate(R.menu.items_activity_menu, menu);
         return true;
     }
 

@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,77 +30,53 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     EditText txtTitle;
     TextView textView;
+    TextView textView1;
     private Button mFirebasebtn;
-    FrameLayout fLayout;
     private static Activity caller;
     Button bt;
-
+    FirebaseUser firebaseUser;
+    private String userID;
+    ArrayList<String> listItems = new ArrayList<>();
+    ArrayList<String> listKeys = new ArrayList<>();
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FirebaseUtil.openFbReference("shoppinglists", this);
-        mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
-        mDatabaseReference = FirebaseUtil.mDatabaseReference;
-        txtTitle = (EditText) findViewById(R.id.listName);
-        /**
-         * Getting already made lists from the database...
-         */
-        mFirebasebtn = (Button) findViewById(R.id.newList);
-        caller = this;
 
-        final ListAdapter myAdapter = new FirebaseListAdapter<ShoppingList>(this, ShoppingList.class,
-                android.R.layout.simple_list_item_1, mDatabaseReference) {
 
-            @Override
-            protected void populateView(View v, ShoppingList list, int position) {
-//                LinearLayout linearLayout = new LinearLayout(caller);
-//                linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-//                linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                textView = (TextView)v.findViewById(android.R.id.text1);
-                ViewGroup.LayoutParams params =  new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                textView.setLayoutParams(params);
-                textView.setText(list.getTitle());
-//                bt = (Button)v.findViewById(android.R.id.button1);
-//                bt.setText("Delete");
-            }
-        };
-        final ListView listView = (ListView) findViewById(R.id.listView);
-
-        listView.setAdapter(myAdapter);
-        mFirebasebtn.setOnClickListener(this);
-
-        // upon clicking an item, shows the contents of
-        // the grocery list, and passes grocery list name to
-        // the next activity
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(),ViewListActivity.class);
-                ShoppingList lTitle = new ShoppingList();
-                lTitle = (ShoppingList) listView.getItemAtPosition(position);
-                String gName = lTitle.getTitle();
-                intent.putExtra("listName",gName);
-                startActivity(intent);
-            }
-        });
+//        user.sendEmailVerification()
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if(task.isSuccessful()) {
+//                  //          Log.d(TAG, "Email sent.");
+//                        }
+//                    }
+//                });
     }
 
     @Override
@@ -121,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gList.add(item2);
         */
         ShoppingList list = new ShoppingList(title);
+        Map<String,String> users = new HashMap<>();
+        users.put(firebaseUser.getUid(),firebaseUser.getEmail());
+        list.setUsers(users);
         mDatabaseReference.push().setValue(list);
 
     }
@@ -150,10 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         });
                 FirebaseUtil.detachListener();
                 return true;
-            case R.id.roommates:
-                Intent roommate = new Intent(this,RoommatesActivity.class);
-                this.startActivity(roommate);
-                return true;
             case R.id.shopping_list:
                 Intent i = new Intent(this,MainActivity.class);
                 this.startActivity(i);
@@ -171,8 +147,114 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-       FirebaseUtil.attachListener();
+
+
+        listItems.clear();
+
+
+        FirebaseUtil.openFbReference("shoppinglists", this);
+        mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
+        mDatabaseReference = FirebaseUtil.mDatabaseReference;
+        txtTitle = (EditText) findViewById(R.id.listName);
+        /**
+         * Getting already made lists from the database...
+         */
+        mFirebasebtn = (Button) findViewById(R.id.newList);
+        caller = this;
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if( null == firebaseUser){
+
+            AuthUI.getInstance()
+                    .signOut(this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            FirebaseUtil.attachListener();
+                        }
+                    });
+            FirebaseUtil.detachListener();
+            return;
+        }
+
+        userID = firebaseUser.getUid();
+        //userID = "p.surbhi2903@gmail.com";
+
+        //Query query = mDatabaseReference.orderByChild("users/l6uhx6wunqZrhItRrToPDsjVNu73").equalTo(userID);
+        Query query = mDatabaseReference.orderByChild("users/" + firebaseUser.getUid()).equalTo(firebaseUser.getEmail());
+
+
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                listItems);
+
+        final ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
+        mFirebasebtn.setOnClickListener(this);
+
+        addChildEventListener(query,adapter,listKeys,listItems);
+
+
+        // upon clicking an item, shows the contents of
+        // the grocery list, and passes grocery list name to
+        // the next activity
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(),ViewListActivity.class);
+                intent.putExtra("listName",listItems.get(position));
+                intent.putExtra("id",listKeys.get(position));
+                startActivity(intent);
+            }
+        });
+
+        FirebaseUtil.attachListener();
+        adapter.setNotifyOnChange(true);
+        adapter.notifyDataSetChanged();
+
     }
+
+    private void addChildEventListener(final Query dbRef, final ArrayAdapter<String> adapter,final List<String> listKeys, final List<String> listItems) {
+        ChildEventListener childListener = new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                ShoppingList sl = new ShoppingList();
+                sl.setTitle((String) dataSnapshot.child("title").getValue());
+
+                adapter.add(
+                        (String) dataSnapshot.child("title").getValue());
+
+                listKeys.add(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getKey();
+                int index = listKeys.indexOf(key);
+
+                if (index != -1) {
+                    listItems.remove(index);
+                    listKeys.remove(index);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        dbRef.addChildEventListener(childListener);
+    }
+
 }
 
 

@@ -19,8 +19,14 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class ViewListActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -29,6 +35,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
     TextView listName;
     String listKey;
     String data;
+    ArrayList<GroceryItem> groceryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
         Bundle extras = getIntent().getExtras();
         data = extras.getString("listName");
         listKey = extras.getString("id");
+        Log.e("listkey", listKey);
         FirebaseUtil.openFbReference("shoppinglists", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
@@ -44,18 +52,47 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
         listName.setText(data);
         ListView listView = (ListView) findViewById(R.id.itemLV);
         Button btn = (Button)findViewById(R.id.addItemBtn);
+        mDatabaseReference.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        groceryItems = new ArrayList<>();
+                        //collectListNames((Map<String, GroceryItem>) dataSnapshot.getValue());
+                        if (dataSnapshot.exists()) {
+                            int i = 0;
+                            for (DataSnapshot d: dataSnapshot.getChildren()) {
+                                //listKeys.add(d.getKey());
+                                i++;
+                                Log.e("Items", d.child("items").toString());
+                            }
+                        }
+                        GroceryItem test = dataSnapshot.child(listKey).child("items").getValue(GroceryItem.class);
+                        groceryItems.add(test);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                }
+        );
+
         ListAdapter myAdapter = new FirebaseListAdapter<GroceryItem>(this, GroceryItem.class,
-                R.layout.item_list, mDatabaseReference.child(data).child("items")) {
+                R.layout.item_list, mDatabaseReference.child(listKey).child("items")) {
+
             @Override
             protected void populateView(View v, GroceryItem item, int position) {
+                Log.e("items", item.getItemName());
                 ((TextView) v.findViewById(R.id.iName)).setText(item.getItemName());
                 ((TextView) v.findViewById(R.id.item_cost)).setText(item.getItemCost());
+                ((TextView) v.findViewById(R.id.purchasedBy)).setText(item.getPurchasedBy());
             }
         };
         listView.setAdapter(myAdapter);
-
         btn.setOnClickListener(this);
     }
+
+
 
     @Override
     public void onClick(View v) {

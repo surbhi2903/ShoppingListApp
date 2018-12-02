@@ -1,19 +1,24 @@
 package edu.uga.cs.shoppinglistapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.database.FirebaseListAdapter;
@@ -35,6 +40,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
     TextView listName;
     String listKey;
     String data;
+    int itemPosition;
     ArrayList<GroceryItem> groceryItems;
 
     @Override
@@ -50,7 +56,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
         listName = (TextView)findViewById(R.id.listName);
         listName.setText(data);
-        ListView listView = (ListView) findViewById(R.id.itemLV);
+        final ListView listView = (ListView) findViewById(R.id.itemLV);
         Button btn = (Button)findViewById(R.id.addItemBtn);
         mDatabaseReference.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -60,11 +66,6 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
                         //collectListNames((Map<String, GroceryItem>) dataSnapshot.getValue());
                         if (dataSnapshot.exists()) {
                             int i = 0;
-                            for (DataSnapshot d: dataSnapshot.getChildren()) {
-                                //listKeys.add(d.getKey());
-                                i++;
-                                Log.e("Items", d.child("items").toString());
-                            }
                         }
                         GroceryItem test = dataSnapshot.child(listKey).child("items").getValue(GroceryItem.class);
                         groceryItems.add(test);
@@ -77,7 +78,8 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
                 }
         );
 
-        ListAdapter myAdapter = new FirebaseListAdapter<GroceryItem>(this, GroceryItem.class,
+        listView.setLongClickable(true);
+         ListAdapter myAdapter = new FirebaseListAdapter<GroceryItem>(this, GroceryItem.class,
                 R.layout.item_list, mDatabaseReference.child(listKey).child("items")) {
 
             @Override
@@ -86,13 +88,37 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
                 ((TextView) v.findViewById(R.id.iName)).setText(item.getItemName());
                 ((TextView) v.findViewById(R.id.item_cost)).setText(item.getItemCost());
                 ((TextView) v.findViewById(R.id.purchasedBy)).setText(item.getPurchasedBy());
+
             }
         };
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ViewListActivity.this);
+                dialogBuilder.setTitle("Delete grocery list?");
+                dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "List not deleted."
+                                , Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialogBuilder.create().show();
+                return true;
+            }
+        });
         listView.setAdapter(myAdapter);
+        registerForContextMenu(listView);
         btn.setOnClickListener(this);
+
     }
-
-
 
     @Override
     public void onClick(View v) {

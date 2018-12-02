@@ -17,8 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ViewListActivity" />
-        <activity android:name=".RoommatesActivity" />
-        <activity android:name=".NewItemActivity"></activity>
+        <activity android:name=".NewItemActivity" />
+        <activity android:name=".RoommateActivity"></activity>
     </application>
 
 </manifest>

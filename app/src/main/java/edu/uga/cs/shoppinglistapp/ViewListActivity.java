@@ -27,15 +27,16 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mDatabaseReference;
     TextView listName;
-    int listKey;
+    String listKey;
+    String data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_list);
         Bundle extras = getIntent().getExtras();
-        String data = extras.getString("listName");
-        listKey = extras.getInt("id");
+        data = extras.getString("listName");
+        listKey = extras.getString("id");
         FirebaseUtil.openFbReference("shoppinglists", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
@@ -75,19 +76,10 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.logout_menu:
-                AuthUI.getInstance()
-                        .signOut(this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Log.d("Logout", "User Logged Out");
-                                FirebaseUtil.attachListener();
-                            }
-                        });
-                FirebaseUtil.detachListener();
-                return true;
             case R.id.roommates:
-                Intent roommate = new Intent(this,RoommatesActivity.class);
+                Intent roommate = new Intent(this,RoommateActivity.class);
+                roommate.putExtra("listName",data);
+                roommate.putExtra("id",listKey);
                 this.startActivity(roommate);
                 return true;
             case R.id.shopping_list:

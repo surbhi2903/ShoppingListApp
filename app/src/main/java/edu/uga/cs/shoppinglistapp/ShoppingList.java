@@ -2,6 +2,7 @@ package edu.uga.cs.shoppinglistapp;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ShoppingList {
     private String uid;
@@ -9,7 +10,7 @@ public class ShoppingList {
     private List<GroceryItem> items;
     private String listId;
     private String shoppingId;
-    private Map<String,String> users;
+    private List<String> users;
 
     public ShoppingList () {
 
@@ -57,11 +58,11 @@ public class ShoppingList {
         return items;
     }
 
-    public Map<String, String> getUsers() {
+    public List<String> getUsers() {
         return users;
     }
 
-    public void setUsers(Map<String, String> users) {
+    public void setUsers(List<String> users) {
         this.users = users;
     }
 }

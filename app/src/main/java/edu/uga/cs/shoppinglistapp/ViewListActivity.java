@@ -49,7 +49,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
             @Override
             protected void populateView(View v, GroceryItem item, int position) {
                 ((TextView) v.findViewById(R.id.iName)).setText(item.getItemName());
-                ((TextView) v.findViewById(R.id.iCost)).setText(item.getItemCost());
+                ((TextView) v.findViewById(R.id.item_cost)).setText(item.getItemCost());
             }
         };
         listView.setAdapter(myAdapter);

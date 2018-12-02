@@ -1,6 +1,8 @@
 package edu.uga.cs.shoppinglistapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -168,7 +170,30 @@ public class RoommateActivity extends AppCompatActivity {
 
         final ListView listView = (ListView) findViewById(R.id.roommate_list);
         listView.setAdapter(adapter);
-   //     checkEmailId.setOnClickListener(this);
+        //     checkEmailId.setOnClickListener(this);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RoommateActivity.this);
+                dialogBuilder.setTitle("Delete grocery list?");
+                dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "List not deleted."
+                                , Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialogBuilder.create().show();
+                return true;
+            }
+        });
 
         addChildEventListener(query,adapter,listKeys,listItems);
 

@@ -40,7 +40,7 @@
 
     <ListView
         android:id="@+id/roommate_list"
-        android:layout_width="375dp"
+        android:layout_width="match_parent"
         android:layout_height="358dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"

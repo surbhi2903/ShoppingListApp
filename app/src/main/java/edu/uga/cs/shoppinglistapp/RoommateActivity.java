@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RoommateActivity extends AppCompatActivity {
+public class RoommateActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseAuth auth;
     EditText emailId;
     Button checkEmailId;
@@ -55,37 +55,26 @@ public class RoommateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roommate);
-        emailId = (EditText)findViewById(R.id.roommate_text);
-        checkEmailId = (Button)findViewById(R.id.button);
+    }
 
-        caller = this;
-        auth = FirebaseAuth.getInstance();
+    @Override
+    public void onClick(View v) {
 
-        checkEmailId.setOnClickListener(
-                new View.OnClickListener() {
-                    public void onClick(View v) {
-                        auth.fetchSignInMethodsForEmail(emailId.getText().toString())
-                                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+        auth.fetchSignInMethodsForEmail(emailId.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
 
-                                        boolean check = !task.getResult().getSignInMethods().isEmpty();
+                        boolean check = !task.getResult().getSignInMethods().isEmpty();
 
-                                        if(!check) {
-                                            Toast.makeText(RoommateActivity.this, "Email not found", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            saveId();
-                                            Toast.makeText(RoommateActivity.this, "Email already present", Toast.LENGTH_SHORT).show();
-                                            clean();
-                                        }
-
-                                    }
-                                });
+                        if (!check) {
+                            Toast.makeText(RoommateActivity.this, "Email not found", Toast.LENGTH_SHORT).show();
+                        } else {
+                            saveId();
+                            clean();
+                        }
                     }
-                }
-        );
-
+                });
     }
 
     private void saveId() {
@@ -144,6 +133,11 @@ public class RoommateActivity extends AppCompatActivity {
         FirebaseUtil.openFbReference("shoppinglists", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
+        emailId = (EditText)findViewById(R.id.roommate_text);
+        checkEmailId = (Button)findViewById(R.id.button);
+
+        caller = this;
+        auth = FirebaseAuth.getInstance();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -168,7 +162,7 @@ public class RoommateActivity extends AppCompatActivity {
 
         final ListView listView = (ListView) findViewById(R.id.roommate_list);
         listView.setAdapter(adapter);
-   //     checkEmailId.setOnClickListener(this);
+        checkEmailId.setOnClickListener(this);
 
         addChildEventListener(query,adapter,listKeys,listItems);
 
@@ -183,6 +177,9 @@ public class RoommateActivity extends AppCompatActivity {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                listKeys.clear();
+                listItems.clear();
                 List<String> users = (List<String>) dataSnapshot.child("users").getValue();
                 int i = 0;
                 for(String user: users) {
@@ -193,6 +190,14 @@ public class RoommateActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                listKeys.clear();
+                listItems.clear();
+                List<String> users = (List<String>) dataSnapshot.child("users").getValue();
+                int i = 0;
+                for(String user: users) {
+                    adapter.add(user);
+                    listKeys.add(String.valueOf(i++));
+                }
             }
 
             @Override

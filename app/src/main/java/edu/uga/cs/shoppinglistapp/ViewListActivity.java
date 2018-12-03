@@ -108,14 +108,15 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
                 dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Item deleted", Toast.LENGTH_LONG).show();
                         mDatabaseReference.child(listKey).child("items").child(itemKeys.get(position)).removeValue();
+                        ((FirebaseListAdapter<GroceryItem>) myAdapter).notifyDataSetChanged();
 
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "List not deleted."
+                        Toast.makeText(getApplicationContext(), "Item not deleted."
                                 , Toast.LENGTH_SHORT).show();
                     }
                 });

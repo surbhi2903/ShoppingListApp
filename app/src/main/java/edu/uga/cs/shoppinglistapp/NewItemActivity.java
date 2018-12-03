@@ -27,6 +27,7 @@ public class NewItemActivity extends AppCompatActivity  {
     private EditText itemCost;
     private EditText paidBy;
     private Button saveButton;
+    private Button backButton;
 
     String listName = null;
     String listKey = null;
@@ -43,6 +44,7 @@ public class NewItemActivity extends AppCompatActivity  {
         itemCost = (EditText) findViewById(R.id.item_cost);
         paidBy = (EditText) findViewById(R.id.paidName);
         saveButton = (Button) findViewById(R.id.button);
+        backButton = (Button) findViewById(R.id.back);
 
         Bundle extras = getIntent().getExtras();
 
@@ -83,6 +85,15 @@ public class NewItemActivity extends AppCompatActivity  {
         );
 
         saveButton.setOnClickListener(new ButtonClickListener());
+
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     }
 

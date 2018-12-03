@@ -1,10 +1,13 @@
 package edu.uga.cs.shoppinglistapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RoommateActivity extends AppCompatActivity implements View.OnClickListener {
+public class RoommateActivity extends AppCompatActivity {
     FirebaseAuth auth;
     EditText emailId;
     Button checkEmailId;
@@ -55,26 +58,36 @@ public class RoommateActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roommate);
-    }
+        emailId = (EditText)findViewById(R.id.roommate_text);
+        checkEmailId = (Button)findViewById(R.id.button);
 
-    @Override
-    public void onClick(View v) {
+        caller = this;
+        auth = FirebaseAuth.getInstance();
 
-        auth.fetchSignInMethodsForEmail(emailId.getText().toString())
-                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+        checkEmailId.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View v) {
+                        auth.fetchSignInMethodsForEmail(emailId.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
 
-                        boolean check = !task.getResult().getSignInMethods().isEmpty();
+                                        boolean check = !task.getResult().getSignInMethods().isEmpty();
 
-                        if (!check) {
-                            Toast.makeText(RoommateActivity.this, "Email not found", Toast.LENGTH_SHORT).show();
-                        } else {
-                            saveId();
-                            clean();
-                        }
+                                        if(!check) {
+                                            Toast.makeText(RoommateActivity.this, "Email not found", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            saveId();
+                                            clean();
+                                        }
+
+                                    }
+                                });
                     }
-                });
+                }
+        );
+
     }
 
     private void saveId() {
@@ -133,11 +146,6 @@ public class RoommateActivity extends AppCompatActivity implements View.OnClickL
         FirebaseUtil.openFbReference("shoppinglists", this);
         mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
-        emailId = (EditText)findViewById(R.id.roommate_text);
-        checkEmailId = (Button)findViewById(R.id.button);
-
-        caller = this;
-        auth = FirebaseAuth.getInstance();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -162,7 +170,33 @@ public class RoommateActivity extends AppCompatActivity implements View.OnClickL
 
         final ListView listView = (ListView) findViewById(R.id.roommate_list);
         listView.setAdapter(adapter);
-        checkEmailId.setOnClickListener(this);
+        //     checkEmailId.setOnClickListener(this);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RoommateActivity.this);
+                dialogBuilder.setTitle("Delete roommate?");
+                dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+                        mDatabaseReference.child(listKey).child("users").child(Integer.toString(position)).removeValue();
+                        listItems.remove(position);
+                        adapter.notifyDataSetChanged();
+
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "List not deleted."
+                                , Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialogBuilder.create().show();
+                return true;
+            }
+        });
 
         addChildEventListener(query,adapter,listKeys,listItems);
 
@@ -206,6 +240,7 @@ public class RoommateActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                /*
                 String key = dataSnapshot.getKey();
                 int index = listKeys.indexOf(key);
 
@@ -214,6 +249,7 @@ public class RoommateActivity extends AppCompatActivity implements View.OnClickL
                     listKeys.remove(index);
                     adapter.notifyDataSetChanged();
                 }
+                */
             }
 
             @Override

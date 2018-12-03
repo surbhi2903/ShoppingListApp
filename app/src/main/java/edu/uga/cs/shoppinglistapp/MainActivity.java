@@ -1,6 +1,8 @@
 package edu.uga.cs.shoppinglistapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -81,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         users.add(firebaseUser.getEmail());
         list.setUsers(users);
         mDatabaseReference.push().setValue(list);
-
     }
     private void clean() {
         txtTitle.setText("");
@@ -167,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         addChildEventListener(query,adapter,listKeys,listItems);
 
-
         // upon clicking an item, shows the contents of
         // the grocery list, and passes grocery list name to
         // the next activity
@@ -178,6 +178,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("listName",listItems.get(position));
                 intent.putExtra("id",listKeys.get(position));
                 startActivity(intent);
+            }
+        });
+
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                dialogBuilder.setTitle("Delete grocery list?");
+                dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.e("Key", listKeys.get(position));
+                        Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+                        listItems.remove(position);
+                        mDatabaseReference.child(listKeys.get(position)).removeValue();
+                        adapter.notifyDataSetChanged();
+
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getApplicationContext(), "List not deleted."
+                                        , Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                dialogBuilder.create().show();
+                return true;
             }
         });
 
@@ -193,13 +221,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-               List<String> users = (List<String>) dataSnapshot.child("users").getValue();
-               for(String user: users) {
-                   if( user.equals(firebaseUser.getEmail())){
-                       adapter.add((String) dataSnapshot.child("title").getValue());
-                       listKeys.add(dataSnapshot.getKey());
-                   }
-               }
+                List<String> users = (List<String>) dataSnapshot.child("users").getValue();
+                for(String user: users) {
+                    if( user.equals(firebaseUser.getEmail())){
+                        adapter.add((String) dataSnapshot.child("title").getValue());
+                        listKeys.add(dataSnapshot.getKey());
+                    }
+                }
 
             }
 
@@ -212,8 +240,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
             }
 
+
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                /*
                 String key = dataSnapshot.getKey();
                 int index = listKeys.indexOf(key);
 
@@ -222,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     listKeys.remove(index);
                     adapter.notifyDataSetChanged();
                 }
+                */
             }
 
             @Override

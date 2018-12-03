@@ -9,16 +9,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewListActivity" />
-        <activity android:name=".NewItemActivity" />
-        <activity android:name=".RoommateActivity"></activity>
+        <activity android:name=".ViewListActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
+        <activity android:name=".NewItemActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
+        <activity android:name=".RoommateActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"/>
     </application>
 
 </manifest>

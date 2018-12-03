@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -174,13 +175,16 @@ public class RoommateActivity extends AppCompatActivity {
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RoommateActivity.this);
-                dialogBuilder.setTitle("Delete grocery list?");
+                dialogBuilder.setTitle("Delete roommate?");
                 dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+                        mDatabaseReference.child(listKey).child("users").child(Integer.toString(position)).removeValue();
+                        listItems.remove(position);
+                        adapter.notifyDataSetChanged();
 
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -226,6 +230,7 @@ public class RoommateActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                /*
                 String key = dataSnapshot.getKey();
                 int index = listKeys.indexOf(key);
 
@@ -234,6 +239,7 @@ public class RoommateActivity extends AppCompatActivity {
                     listKeys.remove(index);
                     adapter.notifyDataSetChanged();
                 }
+                */
             }
 
             @Override

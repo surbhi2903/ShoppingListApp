@@ -174,22 +174,23 @@ public class RoommateActivity extends AppCompatActivity {
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RoommateActivity.this);
                 dialogBuilder.setTitle("Delete roommate?");
                 dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
-                        mDatabaseReference.child(listKey).child("users").child(Integer.toString(position)).removeValue();
-                        listItems.remove(position);
+                        Toast.makeText(getApplicationContext(), "Roommate deleted", Toast.LENGTH_LONG).show();
+                        mDatabaseReference.child(listKey).child("users").child(Long.toString(id)).removeValue();
+                        listItems.remove(id);
                         adapter.notifyDataSetChanged();
+                        Log.e("Test", "id is: " + id);
 
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getApplicationContext(), "List not deleted."
+                        Toast.makeText(getApplicationContext(), "Roommate not deleted."
                                 , Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -243,7 +244,6 @@ public class RoommateActivity extends AppCompatActivity {
                 /*
                 String key = dataSnapshot.getKey();
                 int index = listKeys.indexOf(key);
-
                 if (index != -1) {
                     listItems.remove(index);
                     listKeys.remove(index);

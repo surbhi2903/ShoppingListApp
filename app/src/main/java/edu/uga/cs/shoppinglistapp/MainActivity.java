@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.e("Key", listKeys.get(position));
-                        Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "List deleted", Toast.LENGTH_LONG).show();
                         listItems.remove(position);
                         mDatabaseReference.child(listKeys.get(position)).removeValue();
                         adapter.notifyDataSetChanged();

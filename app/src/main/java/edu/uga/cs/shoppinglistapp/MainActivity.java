@@ -168,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         addChildEventListener(query,adapter,listKeys,listItems);
 
-
         // upon clicking an item, shows the contents of
         // the grocery list, and passes grocery list name to
         // the next activity
@@ -185,14 +184,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
                 dialogBuilder.setTitle("Delete grocery list?");
-                dialogBuilder.setPositiveButton("Delete?", new DialogInterface.OnClickListener() {
+                dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Log.e("Key", listKeys.get(position));
                         Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
-                        
+                        listItems.remove(position);
+                        mDatabaseReference.child(listKeys.get(position)).removeValue();
+                        adapter.notifyDataSetChanged();
+
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
@@ -237,8 +240,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
             }
 
+
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                /*
                 String key = dataSnapshot.getKey();
                 int index = listKeys.indexOf(key);
 
@@ -247,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     listKeys.remove(index);
                     adapter.notifyDataSetChanged();
                 }
+                */
             }
 
             @Override

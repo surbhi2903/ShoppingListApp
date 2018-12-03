@@ -42,6 +42,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
     String data;
     int itemPosition;
     ArrayList<GroceryItem> groceryItems;
+    ArrayList<String> itemKeys;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
         mDatabaseReference = FirebaseUtil.mDatabaseReference;
         listName = (TextView)findViewById(R.id.listName);
         listName.setText(data);
+        itemKeys = new ArrayList<>();
         final ListView listView = (ListView) findViewById(R.id.itemLV);
         Button btn = (Button)findViewById(R.id.addItemBtn);
         mDatabaseReference.addListenerForSingleValueEvent(
@@ -68,6 +70,12 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
                             int i = 0;
                         }
                         GroceryItem test = dataSnapshot.child(listKey).child("items").getValue(GroceryItem.class);
+                        String key = dataSnapshot.child(listKey).child("items").toString();
+
+                        for (DataSnapshot snapshot : dataSnapshot.child(listKey).child("items").getChildren()) {
+                            key = snapshot.getKey();
+                            itemKeys.add(key);
+                        }
                         groceryItems.add(test);
                     }
 
@@ -79,7 +87,7 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
         );
 
         listView.setLongClickable(true);
-         ListAdapter myAdapter = new FirebaseListAdapter<GroceryItem>(this, GroceryItem.class,
+         final ListAdapter myAdapter = new FirebaseListAdapter<GroceryItem>(this, GroceryItem.class,
                 R.layout.item_list, mDatabaseReference.child(listKey).child("items")) {
 
             @Override
@@ -94,13 +102,14 @@ public class ViewListActivity extends AppCompatActivity implements View.OnClickL
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ViewListActivity.this);
-                dialogBuilder.setTitle("Delete grocery list?");
+                dialogBuilder.setTitle("Delete grocery item?");
                 dialogBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_LONG).show();
+                        mDatabaseReference.child(listKey).child("items").child(itemKeys.get(position)).removeValue();
 
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
